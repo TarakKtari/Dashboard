@@ -40,51 +40,7 @@
             </div>
             <div class="dashboard-card dashboard-chart">
                 <h3>USD/EUR</h3>
-                <div class="tradingview-widget-container">
-                  <div id="tradingview_usdeur"></div>
-                  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                  <script type="text/javascript">
-                  new TradingView.widget({
-                    "width": 400,
-                    "height": 300,
-                    "symbol": "FX_IDC:USDEUR",
-                    "interval": "60",
-                    "timezone": "Etc/UTC",
-                    "theme": "light",
-                    "style": "1",
-                    "locale": "en",
-                    "toolbar_bg": "#f1f3f6",
-                    "enable_publishing": false,
-                    "hide_top_toolbar": true,
-                    "save_image": false,
-                    "container_id": "tradingview_usdeur"
-                  });
-                  </script>
-                </div>
-            </div>
-        </div>
-        <!-- Economic Calendar Widget -->
-        <div class="dashboard-row">
-            <div class="dashboard-card dashboard-chart">
-                <h3>Economic Calendar</h3>
-                <div class="tradingview-widget-container">
-                  <div id="economic-calendar-widget"></div>
-                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async></script>
-                  <script type="text/javascript">
-                  new TradingView.widget({
-                    "container_id": "economic-calendar-widget",
-                    "width": "100%",
-                    "height": "500",
-                    "locale": "en",
-                    "importanceFilter": "0,1",
-                    "currencyFilter": "USD,EUR,GBP,JPY,CAD,CHF,AUD,NZD",
-                    "isTransparent": false,
-                    "colorTheme": "light",
-                    "backgroundColor": "#fff",
-                    "widgetType": "events"
-                  });
-                  </script>
-                </div>
+                <canvas id="usdeurChart" width="400" height="300"></canvas>
             </div>
         </div>
     </div>
@@ -97,6 +53,7 @@
     // The following lines will be valid at runtime when rendered by Flask
     const dxyData = JSON.parse('{{ dxy_data|tojson | safe | tojson | safe }}');
     const vixData = JSON.parse('{{ vix_data|tojson | safe | tojson | safe }}');
+    const usdeurData = JSON.parse('{{ usdeur_data|tojson | safe | tojson | safe }}');
 
     // DXY Chart
     const dxyLabels = Array.isArray(dxyData) ? dxyData.map(item => item.Datetime || item.tradingDay || item.timestamp || item.date) : [];
@@ -131,6 +88,26 @@
                     label: 'VIX',
                     data: vixValues,
                     borderColor: 'red',
+                    fill: false
+                }]
+            },
+            options: {responsive: false}
+        });
+    }
+
+    // USD/EUR Chart
+    const usdeurLabels = Array.isArray(usdeurData) ? usdeurData.map(item => item.Datetime || item.Date || item.timestamp) : [];
+    const usdeurValues = Array.isArray(usdeurData) ? usdeurData.map(item => item.Close || item.close || item.value) : [];
+    if (usdeurLabels.length && usdeurValues.length) {
+        const usdeurCtx = document.getElementById('usdeurChart').getContext('2d');
+        new Chart(usdeurCtx, {
+            type: 'line',
+            data: {
+                labels: usdeurLabels,
+                datasets: [{
+                    label: 'USD/EUR',
+                    data: usdeurValues,
+                    borderColor: 'green',
                     fill: false
                 }]
             },

@@ -26,7 +26,8 @@ def admin_required(fn):
 def dashboard():
     vix_data = get_vix_data()
     dxy_data = get_dxy_data()
-    return render_template('dashboard.html', vix_data=vix_data, dxy_data=dxy_data)
+    usdeur_data = get_usdeur_data()
+    return render_template('dashboard.html', vix_data=vix_data, dxy_data=dxy_data, usdeur_data=usdeur_data)
 
 
 # Set your Eikon API key (replace with your actual key or use env variable)
@@ -60,4 +61,18 @@ def get_dxy_data():
     }).dropna().reset_index()
     dxy_5m = dxy_5m.rename(columns={"index": "Datetime", "OPEN": "Open", "HIGH": "High", "LOW": "Low", "CLOSE": "Close"})
     return dxy_5m.to_dict(orient="records")
+
+def get_usdeur_data():
+    usdeur_df = ek.get_timeseries("EUR=", interval="minute", count=36)
+    if usdeur_df is None or usdeur_df.empty:
+        return []
+    usdeur_df.index = pd.to_datetime(usdeur_df.index)
+    usdeur_5m = usdeur_df.resample("5T").agg({
+        "OPEN": "first",
+        "HIGH": "max",
+        "LOW": "min",
+        "CLOSE": "last"
+    }).dropna().reset_index()
+    usdeur_5m = usdeur_5m.rename(columns={"index": "Datetime", "OPEN": "Open", "HIGH": "High", "LOW": "Low", "CLOSE": "Close"})
+    return usdeur_5m.to_dict(orient="records")
 
