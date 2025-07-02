@@ -1,0 +1,32 @@
+.dashboard-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.dashboard-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+.dashboard-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    padding: 20px;
+    flex: 1 1 0;
+    min-width: 350px;
+    min-height: 120px;
+}
+.dashboard-card h3 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #1a2a3a;
+}
+.dashboard-chart {
+    min-width: 400px;
+    min-height: 320px;
+}
