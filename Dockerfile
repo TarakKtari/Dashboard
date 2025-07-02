@@ -14,8 +14,8 @@ COPY . .
 # Create the data directory (where JSON files will be stored)
 RUN mkdir -p /app/data
 
-# Expose port 5000
-EXPOSE 5000
+# Expose port 5001
+EXPOSE 5001
 
 # Command to run the application
 CMD ["python", "app.py"]

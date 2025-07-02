@@ -1,31 +1,26 @@
-services:
-   db:
-     image: postgres:16
-     restart: always
-     ports:
-       - "5432:5432"
-     environment:
--      POSTGRES_PASSWORD: pass123
-+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+﻿services:
+  db:
+    image: postgres:16
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: pass123
+      POSTGRES_DB: postgres
 
-   app:
-     build: .
-     restart: always
-     ports:
-       - "5001:5001"
-       - "5050:5050"
-     env_file:
-       - .env
-     environment:
--      # keep only things that are NOT in .env
--      DATABASE_URL: postgres://postgres:pass123@db:5432/postgres
-+      # keep only things that are NOT in .env
-+      DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
-     volumes:
-       - ./data:/app/data
-     depends_on:
-       - db
-
+  app:
+    build: .
+    restart: always
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://postgres:pass123@db:5432/postgres
+    volumes:
+      - ./data:/app/data
+    depends_on:
+      - db
 
   dashboard:
     build:
@@ -34,5 +29,9 @@ services:
     restart: always
     ports:
       - "5050:5050"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgres://postgres:pass123@db:5432/postgres
     depends_on:
       - db
