@@ -44,75 +44,89 @@
             </div>
         </div>
     </div>
-    <script src="{{ url_for('dashboard_bp.static', filename='js/dashboard.js') }}"></script>
-</body>
+    
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('dashboard_bp.static', filename='js/dashboard.js') }}"></script>
+    
     <script>
-    // Parse data passed from Flask
-    // The following lines will be valid at runtime when rendered by Flask
-    const dxyData = JSON.parse('{{ dxy_data|tojson | safe | tojson | safe }}');
-    const vixData = JSON.parse('{{ vix_data|tojson | safe | tojson | safe }}');
-    const usdeurData = JSON.parse('{{ usdeur_data|tojson | safe | tojson | safe }}');
+    // Wait for DOM and Chart.js to load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Parse data passed from Flask
+        try {
+            const dxyData = {{ dxy_data|tojson }};
+            const vixData = {{ vix_data|tojson }};
+            const usdeurData = {{ usdeur_data|tojson }};
+            
+            console.log('DXY Data:', dxyData);
+            console.log('VIX Data:', vixData);
+            console.log('USD/EUR Data:', usdeurData);
 
-    // DXY Chart
-    const dxyLabels = Array.isArray(dxyData) ? dxyData.map(item => item.Datetime || item.tradingDay || item.timestamp || item.date) : [];
-    const dxyValues = Array.isArray(dxyData) ? dxyData.map(item => item.Close || item.close || item.settle || item.value) : [];
-    if (dxyLabels.length && dxyValues.length) {
-        const dxyCtx = document.getElementById('dxyChart').getContext('2d');
-        new Chart(dxyCtx, {
-            type: 'line',
-            data: {
-                labels: dxyLabels,
-                datasets: [{
-                    label: 'DXY',
-                    data: dxyValues,
-                    borderColor: 'blue',
-                    fill: false
-                }]
-            },
-            options: {responsive: false}
-        });
-    }
+            // DXY Chart
+            const dxyLabels = Array.isArray(dxyData) ? dxyData.map(item => item.Datetime) : [];
+            const dxyValues = Array.isArray(dxyData) ? dxyData.map(item => item.Close) : [];
+            if (dxyLabels.length && dxyValues.length) {
+                const dxyCtx = document.getElementById('dxyChart').getContext('2d');
+                new Chart(dxyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: dxyLabels,
+                        datasets: [{
+                            label: 'DXY',
+                            data: dxyValues,
+                            borderColor: 'blue',
+                            backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                            fill: false
+                        }]
+                    },
+                    options: {responsive: true, maintainAspectRatio: false}
+                });
+            }
 
-    // VIX Chart
-    const vixLabels = Array.isArray(vixData) ? vixData.map(item => item.Datetime || item.Date || item.index) : [];
-    const vixValues = Array.isArray(vixData) ? vixData.map(item => item.Close || item.close || item.value) : [];
-    if (vixLabels.length && vixValues.length) {
-        const vixCtx = document.getElementById('vixChart').getContext('2d');
-        new Chart(vixCtx, {
-            type: 'line',
-            data: {
-                labels: vixLabels,
-                datasets: [{
-                    label: 'VIX',
-                    data: vixValues,
-                    borderColor: 'red',
-                    fill: false
-                }]
-            },
-            options: {responsive: false}
-        });
-    }
+            // VIX Chart
+            const vixLabels = Array.isArray(vixData) ? vixData.map(item => item.Datetime) : [];
+            const vixValues = Array.isArray(vixData) ? vixData.map(item => item.Close) : [];            if (vixLabels.length && vixValues.length) {
+                const vixCtx = document.getElementById('vixChart').getContext('2d');
+                new Chart(vixCtx, {
+                    type: 'line',
+                    data: {
+                        labels: vixLabels,
+                        datasets: [{
+                            label: 'VIX',
+                            data: vixValues,
+                            borderColor: 'red',
+                            backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                            fill: false
+                        }]
+                    },
+                    options: {responsive: true, maintainAspectRatio: false}
+                });
+            }
 
-    // USD/EUR Chart
-    const usdeurLabels = Array.isArray(usdeurData) ? usdeurData.map(item => item.Datetime || item.Date || item.timestamp) : [];
-    const usdeurValues = Array.isArray(usdeurData) ? usdeurData.map(item => item.Close || item.close || item.value) : [];
-    if (usdeurLabels.length && usdeurValues.length) {
-        const usdeurCtx = document.getElementById('usdeurChart').getContext('2d');
-        new Chart(usdeurCtx, {
-            type: 'line',
-            data: {
-                labels: usdeurLabels,
-                datasets: [{
-                    label: 'USD/EUR',
-                    data: usdeurValues,
-                    borderColor: 'green',
-                    fill: false
-                }]
-            },
-            options: {responsive: false}
-        });
-    }
+            // USD/EUR Chart
+            const usdeurLabels = Array.isArray(usdeurData) ? usdeurData.map(item => item.Datetime) : [];
+            const usdeurValues = Array.isArray(usdeurData) ? usdeurData.map(item => item.Close) : [];
+            if (usdeurLabels.length && usdeurValues.length) {
+                const usdeurCtx = document.getElementById('usdeurChart').getContext('2d');
+                new Chart(usdeurCtx, {
+                    type: 'line',
+                    data: {
+                        labels: usdeurLabels,
+                        datasets: [{
+                            label: 'USD/EUR',
+                            data: usdeurValues,
+                            borderColor: 'green',
+                            backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                            fill: false
+                        }]
+                    },
+                    options: {responsive: true, maintainAspectRatio: false}
+                });
+            }
+        } catch (error) {
+            console.error('Error rendering charts:', error);
+        }
+    });
     </script>
+</body>
 </html>
