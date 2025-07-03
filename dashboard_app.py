@@ -12,10 +12,14 @@ load_dotenv()  # Loads variables from .env
 secret_key = os.getenv("FLASK_SECRET")
 
 app = Flask(__name__)
-app.register_blueprint(dashboard_bp, url_prefix="/dashboard")
+# app.register_blueprint(dashboard_bp, url_prefix="/dashboard")  # Commented out to avoid conflicts
 
 @app.route("/")
 def home():
+    return "Dashboard is loading... <a href='/charts'>Go to Charts</a>"
+
+@app.route("/charts")
+def charts():
     return """
     <!DOCTYPE html>
     <html>
